@@ -53,11 +53,11 @@
   endif
 %}
 
-<!-- Custom hero bar at top -->
+<!-- Custom Hero Bar at Top -->
 <div class="hero-bar">
-    <div class="brand-logo">{{ section.settings.brand_name }}</div>
-    <div class="center-text">{{ section.settings.center_text }}</div>
-    <button class="gift-button">{{ section.settings.gift_button_text }}</button>
+  <div class="brand-logo">{{ section.settings.brand_name }}</div>
+  <div class="center-text">{{ section.settings.center_text }}</div>
+  <button class="gift-button">{{ section.settings.gift_button_text }}</button>
 </div>
 
 <!-- Main Hero Section (White Background) -->
@@ -94,7 +94,7 @@
         {% endif %}
       ></a>
     {%- endif -%}
-
+    
     <!-- Media wrapper is hidden for plain background -->
     <div class="hero__media-wrapper" style="display: none;"></div>
     
@@ -111,7 +111,7 @@
       style="{% render 'layout-panel-style', settings: section.settings %}"
     >
       {% content_for 'blocks' %}
-    </div> 
+    </div>
     
     <!-- Shop Now Section - Bottom Left -->
     <div class="shop-now-wrapper">
