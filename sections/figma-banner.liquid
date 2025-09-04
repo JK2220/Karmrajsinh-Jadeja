@@ -1,0 +1,835 @@
+{% liquid
+  assign media_count = 0
+  if section.settings.image_1 != blank and section.settings.image_2 != blank
+    assign media_width_desktop = 100 | divided_by: 2 | append: 'vw'
+  else
+    assign media_width_desktop = '100vw'
+  endif
+  assign media_width_mobile = '100vw'
+  assign sizes = '(min-width: 750px) ' | append: media_width_desktop | append: ', ' | append: media_width_mobile
+  assign widths = '832, 1200, 1600, 1920, 2560, 3840'
+  assign has_image_1 = false
+  assign has_image_2 = false
+  assign has_video_1 = false
+  assign has_video_2 = false
+  assign has_image = false
+  assign has_video = false
+  assign has_video_multiple = false
+  assign has_media = false
+  assign media_type_1 = section.settings.media_type_1
+  assign media_type_2 = section.settings.media_type_2
+  if section.settings.image_1 != blank and media_type_1 == 'image'
+    assign has_image_1 = true
+  endif
+  if section.settings.image_2 != blank and media_type_2 == 'image'
+    assign has_image_2 = true
+  endif
+  if section.settings.video_1 != blank and media_type_1 == 'video'
+    assign has_video_1 = true
+  endif
+  if section.settings.video_2 != blank and media_type_2 == 'video'
+    assign has_video_2 = true
+  endif
+  if has_image_1 or has_image_2
+    assign has_image = true
+  endif
+  if has_video_1 or has_video_2
+    assign has_video = true
+  endif
+  if has_video_1 and has_video_2
+    assign has_video_multiple = true
+  endif
+  if has_image or has_video
+    assign has_media = true
+  endif
+  assign alpha = section.settings.overlay_color.alpha
+  assign is_transparent = true
+  if alpha == 1 and section.settings.toggle_overlay
+    assign is_transparent = false
+  endif
+  assign fetch_priority = 'auto'
+  if section.index == 1
+    assign fetch_priority = 'high'
+  endif
+%}
+
+<!-- Custom hero bar at top -->
+<div class="hero-bar">
+    <div class="brand-logo">{{ section.settings.brand_name }}</div>
+    <div class="center-text">{{ section.settings.center_text }}</div>
+    <button class="gift-button">{{ section.settings.gift_button_text }}</button>
+</div>
+
+<!-- Main Hero Section (White Background) -->
+<div
+  id="Hero-{{ section.id }}"
+  class="hero hero--white-background color-{{ section.settings.color_scheme }}{% if section.blocks.size == 0 and section.settings.section_height == 'auto' %} hero--no-blocks-auto-height{% endif %}"
+  style="
+    --hero-border-style: {{ section.settings.border }};
+    --hero-border-width: {{ section.settings.border_width }}px;
+    --hero-border-opacity: {{ section.settings.border_opacity }}%;
+    --blur-opacity: {{ section.settings.reflection_opacity | divided_by: 100.0 }};
+    {% if section.settings.section_height == 'custom' %}
+      --hero-min-height: {{ section.settings.section_height_custom }}svh;
+    {% elsif section.settings.section_height == "full-screen" %}
+       --hero-min-height: 100svh;
+    {% else %}
+      --hero-min-height: var(--section-height-{{ section.settings.section_height }});
+    {% endif %}
+  "
+  {% if request.visual_preview_mode %}
+    data-shopify-visual-preview
+  {% endif %}
+>
+  <div
+    class="hero__container spacing-style section section--full-width"
+    style="      {% render 'spacing-style', settings: section.settings %}"
+  >
+    {%- if section.settings.link != blank -%}
+      <a
+        href="{{ section.settings.link }}"
+        class="hero__link"
+        {% if section.settings.open_in_new_tab %}
+          target="_blank" rel="noopener"
+        {% endif %}
+      ></a>
+    {%- endif -%}
+
+    <!-- Media wrapper is hidden for plain background -->
+    <div class="hero__media-wrapper" style="display: none;"></div>
+    
+    <div
+      class="
+        hero__content-wrapper
+        layout-panel-flex
+        layout-panel-flex--{{ section.settings.content_direction }}
+        {% if section.settings.vertical_on_mobile %}mobile-column{% endif %}
+        section-content-wrapper
+        {{section.settings.section_width}}
+        {% if request.design_mode %}hero__content-wrapper--design-mode{% endif %}
+      "
+      style="{% render 'layout-panel-style', settings: section.settings %}"
+    >
+      {% content_for 'blocks' %}
+    </div> 
+    
+    <!-- Shop Now Section - Bottom Left -->
+    <div class="shop-now-wrapper">
+      <div class="shop-title">{{ section.settings.shop_title }}</div>
+      <div class="shop-description">{{ section.settings.shop_description }}</div>
+      <button class="shop-now-button">{{ section.settings.shop_button_text }}</button>
+    </div>
+  </div>
+</div>
+
+<!-- Footer Section with Grey Background -->
+<div class="hero-footer">
+  <div class="footer-text">{{ section.settings.footer_text }}</div>
+</div>
+
+{% stylesheet %}
+  /* Custom Hero Bar Styles - Grey Background */
+  .hero-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 40px;
+    background: #f5f5f5;
+    border-bottom: 1px solid #e0e0e0;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+  }
+
+  .brand-logo {
+    font-size: 18px;
+    font-weight: 700;
+    color: #000000;
+    background: transparent;
+    letter-spacing: 0.5px;
+  }
+
+  .center-text {
+    flex: 1;
+    text-align: center;
+    font-size: 16px;
+    color: #333333;
+    font-weight: 400;
+    margin: 0 40px;
+  }
+
+  .gift-button {
+    position: relative;
+    background: #FFE664;
+    border: none;
+    padding: 14px 32px;
+    font-size: 14px;
+    font-weight: 800;
+    color: #000000;
+    cursor: pointer;
+    letter-spacing: 0.8px;
+    transition: color 0.3s ease;
+    overflow: hidden;
+    z-index: 1;
+  }
+
+  .gift-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #000000;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    z-index: -1;
+  }
+
+  .gift-button:hover::before {
+    transform: translateX(0);
+  }
+
+  .gift-button:hover {
+    color: #ffffff;
+  }
+
+  /* Shop Now Section - Bottom Left */
+  .shop-now-wrapper {
+    position: absolute;
+    bottom: 40px;
+    left: 40px;
+    z-index: 10;
+    pointer-events: auto;
+    max-width: 500px;
+  }
+
+  .shop-title {
+    font-size: 56px;
+    color: #000000;
+    font-weight: 700;
+    margin-bottom: 20px;
+    line-height: 1.1;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    text-align: left;
+  }
+
+  .shop-description {
+    font-size: 16px;
+    color: #333333;
+    font-weight: 400;
+    margin-bottom: 25px;
+    line-height: 1.4;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    text-align: left;
+  }
+
+  .shop-now-button {
+    position: relative;
+    background: #000000;
+    border: none;
+    padding: 14px 32px;
+    font-size: 14px;
+    font-weight: 800;
+    color: #ffffff;
+    cursor: pointer;
+    letter-spacing: 0.8px;
+    transition: color 0.3s ease;
+    overflow: hidden;
+    z-index: 1;
+  }
+
+  .shop-now-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #FFE664;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    z-index: -1;
+  }
+
+  .shop-now-button:hover::before {
+    transform: translateX(0);
+  }
+
+  .shop-now-button:hover {
+    color: #000000;
+  }
+
+  /* Footer Section - Grey Background */
+  .hero-footer {
+    background: #f5f5f5;
+    padding: 20px 40px;
+    text-align: center;
+    border-top: 1px solid #e0e0e0;
+  }
+
+  .footer-text {
+    font-size: 16px;
+    color: #333333;
+    font-weight: 400;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    letter-spacing: 0.5px;
+    margin: 0;
+  }
+
+  /* Mobile Responsive for Hero Bar */
+  @media (max-width: 768px) {
+    .hero-bar {
+      flex-direction: column;
+      gap: 20px;
+      padding: 24px;
+    }
+    
+    .center-text {
+      margin: 0;
+      order: -1;
+    }
+    
+    .shop-now-wrapper {
+      bottom: 20px;
+      left: 20px;
+      max-width: calc(100vw - 40px);
+    }
+    
+    .shop-title {
+      font-size: 36px;
+      margin-bottom: 15px;
+      line-height: 1.2;
+    }
+    
+    .shop-description {
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+    
+    .hero-footer {
+      padding: 16px 20px;
+    }
+    
+    .footer-text {
+      font-size: 14px;
+    }
+  }
+
+  /* Original Hero Styles with White Background */
+  .hero-wrapper {
+    --hero-height-offset: 0px;
+  }
+
+  body:has(> #header-group > .header-section > #header-component[transparent]):not(
+      :has(> #header-group > .header-section + .shopify-section)
+    )
+    .hero-wrapper:first-child {
+    --hero-height-offset: var(--header-group-height, 0);
+  }
+
+  .hero {
+    position: relative;
+    min-height: calc(var(--hero-min-height) - var(--hero-height-offset));
+  }
+
+  /* White Background Override */
+  .hero--white-background {
+    background: #ffffff !important;
+  }
+
+  .hero--white-background .hero__container {
+    background: #ffffff !important;
+  }
+
+  .hero[data-shopify-visual-preview] {
+    --hero-min-height: 600px;
+    min-height: 600px;
+  }
+
+  .hero__container {
+    position: relative;
+    overflow: hidden;
+    border: var(--hero-border-width) var(--hero-border-style) rgb(var(--color-border-rgb) / var(--hero-border-opacity));
+    min-height: inherit;
+    align-items: var(--vertical-alignment-mobile);
+    justify-content: var(--horizontal-alignment);
+    z-index: var(--layer-base);
+    background: #ffffff; /* White background */
+
+    @media screen and (min-width: 750px) {
+      align-items: var(--vertical-alignment);
+    }
+  }
+
+  .hero__content-wrapper.page-width {
+    grid-column: 2 / 3;
+  }
+
+  .hero__content-wrapper {
+    position: relative;
+    inset: 0;
+    z-index: var(--layer-flat);
+  }
+
+  .hero__content-wrapper .group-block-content {
+    position: relative;
+  }
+
+  .hero__media-wrapper {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    grid-column: 1 / -1;
+    grid-template-columns: repeat(var(--hero-media-count, 1), 1fr);
+  }
+
+  .hero--auto .hero__image,
+  .hero--auto .hero__video {
+    aspect-ratio: var(--hero-media-aspect-ratio);
+  }
+
+  .hero--no-blocks-auto-height {
+    :is(.hero__image, .hero__video) {
+      width: 100%;
+      aspect-ratio: auto;
+    }
+
+    .hero__media-wrapper {
+      position: relative;
+    }
+  }
+
+  .hero__image,
+  .hero__video,
+  .hero__video-poster {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    object-position: center center;
+    overflow: hidden;
+    position: relative;
+    z-index: var(--layer-base);
+  }
+
+  .hero__video-poster {
+    position: absolute;
+  }
+
+  .hero__link {
+    position: absolute;
+    inset: 0;
+    grid-column: 1 / -1;
+  }
+
+  .hero__media-wrapper,
+  .hero__content-wrapper {
+    pointer-events: none;
+
+    :is(a, button, input, textarea, select) {
+      pointer-events: auto;
+    }
+  }
+
+  .hero__content-wrapper--design-mode * {
+    pointer-events: auto;
+  }
+
+  /* Remove blurred reflection styles for plain background */
+  .hero--white-background[data-blur-shadow='true'] {
+    --blurred-reflection-filter-saturate: none;
+    --blurred-reflection-mask-image: none;
+    --blurred-reflection-box-shadow: none;
+    --blurred-reflection-filter-blur: none;
+    --blurred-reflection-scale: none;
+    --blurred-reflection-padding-block-end: 0px;
+  }
+
+  .hero--white-background[data-blur-shadow='true'] .hero__container {
+    overflow: hidden;
+  }
+
+  .hero--white-background[data-blur-shadow='true'] .hero__container::before {
+    display: none;
+  }
+
+  .hero--white-background .hero__blurred-image {
+    display: none;
+  }
+{% endstylesheet %}
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const giftButton = document.querySelector('.gift-button');
+  const shopButton = document.querySelector('.shop-now-button');
+  
+  if(giftButton) {
+    console.log('Hero section loaded with gift button');
+  }
+  
+  if(shopButton) {
+    console.log('Shop now button loaded');
+  }
+});
+</script>
+
+{% schema %}
+{
+  "name": "Combined Hero Banner",
+  "tag": "section",
+  "class": "hero-wrapper section-wrapper",
+  "blocks": [
+    {
+      "type": "@theme"
+    },
+    {
+      "type": "text"
+    },
+    {
+      "type": "button"
+    },
+    {
+      "type": "logo"
+    },
+    {
+      "type": "jumbo-text"
+    },
+    {
+      "type": "spacer"
+    },
+    {
+      "type": "group"
+    },
+    {
+      "type": "_marquee"
+    }
+  ],
+  "disabled_on": {
+    "groups": ["header"]
+  },
+  "settings": [
+    {
+      "type": "header",
+      "content": "Custom Hero Bar"
+    },
+    {
+      "type": "text",
+      "id": "brand_name",
+      "label": "Brand Name (Left)",
+      "default": "TISSO VISON"
+    },
+    {
+      "type": "text",
+      "id": "center_text",
+      "label": "Center Text",
+      "default": "Find the ideal gift for your loved ones."
+    },
+    {
+      "type": "text",
+      "id": "gift_button_text",
+      "label": "Gift Button Text (Right)",
+      "default": "CHOOSE GIFT →"
+    },
+    {
+      "type": "header",
+      "content": "Shop Now Section"
+    },
+    {
+      "type": "text",
+      "id": "shop_title",
+      "label": "Shop Title (Above Description)",
+      "default": "The Gift Guide"
+    },
+    {
+      "type": "textarea",
+      "id": "shop_description",
+      "label": "Shop Description Text",
+      "default": "Discover Joy: Your Ultimate Holiday Gift Destination.<br>Explore our curated selection and find the perfect gifts to<br>delight your loved ones this holiday season."
+    },
+    {
+      "type": "text",
+      "id": "shop_button_text",
+      "label": "Shop Now Button Text",
+      "default": "SHOP NOW →"
+    },
+    {
+      "type": "header",
+      "content": "Footer Section"
+    },
+    {
+      "type": "text",
+      "id": "footer_text",
+      "label": "Footer Text",
+      "default": "SUSTAINABLE, ETHICALLY MADE CLOTHES IN SIZES XXS TO 6XL"
+    },
+    {
+      "type": "header",
+      "content": "t:content.layout"
+    },
+    {
+      "type": "select",
+      "id": "content_direction",
+      "label": "t:settings.direction",
+      "options": [
+        {
+          "value": "column",
+          "label": "t:options.vertical"
+        },
+        {
+          "value": "row",
+          "label": "t:options.horizontal"
+        }
+      ],
+      "default": "column"
+    },
+    {
+      "type": "checkbox",
+      "id": "vertical_on_mobile",
+      "label": "t:settings.vertical_on_mobile",
+      "default": true,
+      "visible_if": "{{ section.settings.content_direction == 'row' }}"
+    },
+    {
+      "type": "select",
+      "id": "horizontal_alignment",
+      "label": "t:settings.alignment",
+      "options": [
+        {
+          "value": "flex-start",
+          "label": "t:options.left"
+        },
+        {
+          "value": "center",
+          "label": "t:options.center"
+        },
+        {
+          "value": "flex-end",
+          "label": "t:options.right"
+        },
+        {
+          "value": "space-between",
+          "label": "t:options.space_between"
+        }
+      ],
+      "default": "flex-start",
+      "visible_if": "{{ section.settings.content_direction == 'row' }}"
+    },
+    {
+      "type": "select",
+      "id": "vertical_alignment",
+      "label": "t:settings.position",
+      "options": [
+        {
+          "value": "flex-start",
+          "label": "t:options.top"
+        },
+        {
+          "value": "center",
+          "label": "t:options.center"
+        },
+        {
+          "value": "flex-end",
+          "label": "t:options.bottom"
+        }
+      ],
+      "default": "center",
+      "visible_if": "{{ section.settings.content_direction == 'row' }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "align_baseline",
+      "label": "t:settings.align_baseline",
+      "default": false,
+      "visible_if": "{{ section.settings.vertical_alignment == 'flex_end' }}"
+    },
+    {
+      "type": "select",
+      "id": "horizontal_alignment_flex_direction_column",
+      "label": "t:settings.alignment",
+      "options": [
+        {
+          "value": "flex-start",
+          "label": "t:options.left"
+        },
+        {
+          "value": "center",
+          "label": "t:options.center"
+        },
+        {
+          "value": "flex-end",
+          "label": "t:options.right"
+        }
+      ],
+      "default": "flex-start",
+      "visible_if": "{{ section.settings.content_direction != 'row' }}"
+    },
+    {
+      "type": "select",
+      "id": "vertical_alignment_flex_direction_column",
+      "label": "t:settings.position",
+      "options": [
+        {
+          "value": "flex-start",
+          "label": "t:options.top"
+        },
+        {
+          "value": "center",
+          "label": "t:options.center"
+        },
+        {
+          "value": "flex-end",
+          "label": "t:options.bottom"
+        },
+        {
+          "value": "space-between",
+          "label": "t:options.space_between"
+        }
+      ],
+      "default": "center",
+      "visible_if": "{{ section.settings.content_direction == 'column' }}"
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "label": "t:settings.gap",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "t:settings.width",
+      "options": [
+        {
+          "value": "page-width",
+          "label": "t:options.page"
+        },
+        {
+          "value": "full-width",
+          "label": "t:options.full"
+        }
+      ],
+      "default": "page-width"
+    },
+    {
+      "type": "select",
+      "id": "section_height",
+      "label": "t:settings.height",
+      "options": [
+        {
+          "value": "auto",
+          "label": "t:options.auto"
+        },
+        {
+          "value": "small",
+          "label": "t:options.small"
+        },
+        {
+          "value": "medium",
+          "label": "t:options.medium"
+        },
+        {
+          "value": "large",
+          "label": "t:options.large"
+        },
+        {
+          "value": "full-screen",
+          "label": "t:options.full_screen"
+        },
+        {
+          "value": "custom",
+          "label": "t:options.custom"
+        }
+      ],
+      "default": "medium"
+    },
+    {
+      "type": "range",
+      "id": "section_height_custom",
+      "label": "t:settings.custom_height",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "default": 50,
+      "unit": "%",
+      "visible_if": "{{ section.settings.section_height == 'custom' }}"
+    },
+    {
+      "type": "header",
+      "content": "t:content.appearance"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:content.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "Combined Hero Banner",
+      "category": "t:categories.banners",
+      "blocks": {
+        "text_1": {
+          "type": "text",
+          "settings": {
+            "text": "<h1>New arrivals</h1>",
+            "type_preset": "h1",
+            "max_width": "narrow"
+          }
+        },
+        "text_2": {
+          "type": "text",
+          "settings": {
+            "text": "<p>Made with care and unconditionally loved by our customers.</p>",
+            "max_width": "narrow",
+            "padding-block-end": 32
+          }
+        },
+        "button": {
+          "type": "button",
+          "name": "t:names.button",
+          "settings": {
+            "label": "Shop Now",
+            "link": "shopify://collections/all"
+          }
+        }
+      },
+      "block_order": ["text_1", "text_2", "button"],
+      "settings": {
+        "horizontal_alignment_flex_direction_column": "center",
+        "gap": 16,
+        "section_height": "large",
+        "color_scheme": "scheme-5",
+        "padding-block-start": 40,
+        "padding-block-end": 40
+      }
+    }
+  ]
+}
+{% endschema %}
