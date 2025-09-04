@@ -1,0 +1,62 @@
+/* cudtom-landing.css - Banner + Grid + Modal styling (scoped with ce- prefix) */
+
+/* ============== Hero ===============*/
+.ce-hero { position: relative; overflow: hidden; background:#fff; padding:60px 20px; }
+.ce-hero__bg { position:absolute; inset:0; background-size:cover; background-position:center; opacity:1; z-index:0; height:100%; }
+.ce-hero__inner { position:relative; max-width:1200px; margin:0 auto; z-index:2; display:flex; align-items:center; gap:30px; }
+.ce-hero__content { max-width:640px; padding:40px 0; }
+.ce-hero__title { margin:0 0 18px; font-size:56px; line-height:1.03; font-weight:700; color:#111; }
+.ce-hero__line1 { display:block; }
+.ce-hero__line2 { display:block; color:#111; }
+/* subheading */
+.ce-hero__sub { margin:0 0 24px; color:#444; font-size:16px; line-height:1.5; }
+
+/* CTA button with animation */
+.ce-btn { display:inline-flex; align-items:center; gap:12px; padding:12px 22px; border-radius:6px; text-decoration:none; border:0; cursor:pointer; font-weight:700; position:relative; overflow:hidden; }
+.ce-cta { background:#111; color:#fff; }
+.ce-btn__anim { position:absolute; inset:0; transform:translateX(-100%); transition:transform .45s ease; opacity:.06; background:linear-gradient(90deg,#fff,#fff); }
+.ce-cta:hover .ce-btn__anim, .ce-cta:focus .ce-btn__anim { transform:translateX(0%); }
+
+/* tagline (small bar) */
+.ce-hero__tag { margin-top:18px; font-size:12px; color:#777; }
+
+/* =========== Grid =========== */
+.ce-grid { padding:40px 20px; max-width:1200px; margin:0 auto; }
+.ce-grid__row { display:grid; grid-template-columns: repeat(3, 1fr); gap:20px; }
+.ce-product-card { background:#fff; padding:6px; border-radius:6px; text-align:left; }
+.ce-product-card__media { position:relative; overflow:hidden; border-radius:6px; }
+.ce-product-card__img { width:100%; height:320px; object-fit:cover; display:block; border-radius:6px; }
+.ce-hotspot-button { position:absolute; right:12px; top:12px; width:34px; height:34px; border-radius:50%; background:#fff; border:2px solid #111; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 6px 14px rgba(0,0,0,0.12); }
+.ce-product-card__title { margin:12px 0 6px; font-size:18px; color:#111; }
+.ce-product-card__price { color:#333; margin-bottom:6px; }
+
+/* placeholder */
+.ce-placeholder { padding:20px; color:#777; font-size:14px; }
+
+/* =========== Modal =========== */
+.ce-modal { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; z-index:9999; }
+.ce-modal__overlay { position:absolute; inset:0; background:rgba(0,0,0,0.5); }
+.ce-modal__panel { position:relative; background:#fff; border-radius:10px; padding:20px; width:calc(100% - 40px); max-width:960px; z-index:1; display:flex; gap:20px; }
+.ce-modal__left { flex:1; }
+.ce-modal__left img { width:100%; height:auto; border-radius:8px; object-fit:cover; }
+.ce-modal__right { flex:1; display:flex; flex-direction:column; }
+.ce-modal__title { font-size:20px; margin:0 0 8px; }
+.ce-modal__price { font-weight:700; margin-bottom:8px; }
+.ce-variant-select { width:100%; padding:10px; margin-bottom:12px; border-radius:6px; border:1px solid #ddd; }
+
+/* small toast */
+.ce-toast { position:fixed; right:20px; bottom:20px; background:#111; color:#fff; padding:10px 14px; border-radius:8px; z-index:10001; }
+
+/* =========== Responsive =========== */
+@media (max-width: 1000px) {
+  .ce-hero__title { font-size:44px; }
+  .ce-grid__row { grid-template-columns: repeat(2, 1fr); }
+  .ce-product-card__img { height:260px; }
+  .ce-modal__panel { flex-direction:column; max-width:520px; }
+}
+@media (max-width: 480px) {
+  .ce-hero { padding:28px 12px; }
+  .ce-hero__title { font-size:28px; }
+  .ce-grid__row { grid-template-columns: 1fr; }
+  .ce-product-card__img { height:200px; }
+}
