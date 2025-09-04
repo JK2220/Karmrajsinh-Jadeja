@@ -1,0 +1,88 @@
+{% comment %}
+  Product Grid section
+  - Up to 6 blocks (each block selects a product)
+  - Embeds product JSON for modal popup 
+  - Exposes a section-level setting "soft_winter_prodcut" whose first variant is used for auto-add
+{% endcomment %}
+
+{{ 'custom-landing.css' | asset_url | stylesheet_tag }}
+
+<section class="ce-grid" aria-label="Product grid">
+<div class="ce-grid__inner">
+    {% if section.blocks.size == 0 %}
+      <p class="ce-grid__empty">Add product slots in the theme editor.</p>
+    {% endif %}
+
+    <div class="ce-grid__row">
+      {% for block in section.blocks %}
+        <div class="ce-product-card" data-block-id="{{ block.id }}">
+          {% assign product_handle = block.settings.product %}
+          {% if product_handle != blank %}
+            {% assign product = all_products[product_handle] %}
+            {% if product %}
+              <div class="ce-product-card__media">
+                {% if product.featured_image %}
+                  <img src="{{ product.featured_image | img_url: '800x' }}" alt="{{ product.title | escape }}" class="ce-product-card__img">
+                {% else %}
+                  <div class="ce-product-card__img--placeholder">No image</div>
+                {% endif %}
+                <button class="ce-hotspot-button" aria-label="Quick view">+</button>
+              </div>
+              <h3 class="ce-product-card__title">{{ product.title }}</h3>
+             {% if product.variants.size > 0 %}
+                <div class="ce-product-card__price">{{ product.variants.first.price | money }}</div>
+              {% endif %}
+
+              <script type="application/json" class="ce-product-json">
+                {{ product | json }}
+              </script>
+            {% else %}
+              <div class="ce-placeholder">Product not found: {{ product_handle }}</div>
+            {% endif %}
+        {% else %}
+            <div class="ce-placeholder">Choose a product in the block settings</div>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{%- comment -%}
+Expose soft winter variant id to JS. Admin must choose Soft Winter Jacket product in section settings.
+{%- endcomment -%}
+{% assign soft_variant_id = null %}
+{% if section.settings.soft_winter_product != blank %}
+  {% assign soft_product = all_products[section.settings.soft_winter_product] %}
+  {% if soft_product and soft_product.variants.size > 0 %}
+    {% assign soft_variant_id = soft_product.variants.first.id %}
+  {% endif %}
+{% endif %}
+
+<script>window.__ce_softWinterVariant = {{ soft_variant_id | default: 'null' }};</script>
+<script src="{{ 'custom-landing.js' | asset_url }}"></script>
+
+{% schema %}
+{
+  "name": "Product Grid (Gift Guide)",
+  "settings": [
+    {
+      "type": "product",
+      "id": "soft_winter_product",
+      "label": "Soft Winter Jacket (auto-add product)",
+      "info": "Choose product that will be auto-added when a Black + Medium variant is added."
+    }
+  ],
+  "blocks": [
+    {
+      "type": "product_block",
+      "name": "Product slot",
+      "settings": [
+        { "type": "product", "id": "product", "label": "Product" }
+      ]
+    }
+  ],
+  "max_blocks": 6,
+  "presets": [{ "name": "Product Grid", "category": "Custom" }]
+}
+{% endschema %}

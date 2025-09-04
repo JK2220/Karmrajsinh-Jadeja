@@ -9,55 +9,65 @@
  */
 {
   "sections": {
-    "main": {
-      "type": "main-page",
+    "banner": {
+      "type": "figma-banner",
+      "settings": {}
+    },
+    "product_grid": {
+      "type": "custom-product-grid",
       "blocks": {
-        "heading": {
-          "type": "text",
-          "name": "Title",
+        "product_block_nF6Ehd": {
+          "type": "product_block",
           "settings": {
-            "text": "<h1>{{ closest.page.title }}</h1>",
-            "width": "100%",
-            "max_width": "normal",
-            "alignment": "left",
-            "type_preset": "h2",
-            "font": "var(--font-primary--family)",
-            "font_size": "",
-            "line_height": "normal",
-            "letter_spacing": "normal",
-            "case": "none",
-            "wrap": "pretty",
-            "color": "",
-            "background": false,
-            "background_color": "#00000026",
-            "corner_radius": 0,
-            "padding-block-start": 0,
-            "padding-block-end": 0,
-            "padding-inline-start": 0,
-            "padding-inline-end": 0
-          },
-          "blocks": {}
+            "product": "black-leather-bag"
+          }
         },
-        "page-content": {
-          "type": "page-content",
-          "settings": {},
-          "blocks": {}
+        "product_block_djXnpG": {
+          "type": "product_block",
+          "settings": {
+            "product": "blue-silk-tuxedo"
+          }
+        },
+        "product_block_g7cYWx": {
+          "type": "product_block",
+          "settings": {
+            "product": "chequered-red-shirt"
+          }
+        },
+        "product_block_R6cipj": {
+          "type": "product_block",
+          "settings": {
+            "product": "classic-leather-jacket"
+          }
+        },
+        "product_block_gfCd8z": {
+          "type": "product_block",
+          "settings": {
+            "product": "classic-varsity-top"
+          }
+        },
+        "product_block_i4JKJM": {
+          "type": "product_block",
+          "settings": {
+            "product": "dark-denim-top"
+          }
         }
       },
       "block_order": [
-        "heading",
-        "page-content"
+        "product_block_nF6Ehd",
+        "product_block_djXnpG",
+        "product_block_g7cYWx",
+        "product_block_R6cipj",
+        "product_block_gfCd8z",
+        "product_block_i4JKJM"
       ],
       "settings": {
-        "content_direction": "column",
-        "gap": 32,
-        "color_scheme": "",
-        "padding-block-start": 40,
-        "padding-block-end": 80
+        "soft_winter_product": ""
       }
     }
   },
   "order": [
-    "main"
+    "banner",
+    "product_grid"
   ]
 }
